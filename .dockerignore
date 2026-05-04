@@ -1,0 +1,74 @@
+# =========================
+# Git
+# =========================
+.git
+.gitignore
+
+# =========================
+# Python artifacts
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Docker-related
+# =========================
+docker-compose.yml
+docker-compose.override.yml
+
+# =========================
+# Prometheus & Grafana
+# (not needed inside app image)
+# =========================
+prometheus.yml
+grafana/
+prometheus_data/
+grafana_data/
+
+# =========================
+# Tests / Coverage
+# =========================
+tests/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# =========================
+# OS / Editor junk
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =========================
+# Misc
+# =========================
+*.db
+*.sqlite3
+tmp/
+data/

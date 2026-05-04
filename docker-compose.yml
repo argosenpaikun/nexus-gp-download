@@ -15,22 +15,35 @@ services:
     container_name: pushgateway
     ports:
       - "9091:9091"
+    volumes:
+      - pushgateway-data:/data
     restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
+      - prometheus-data:/prometheus
       - prometheus-script:/etc/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
     ports:
       - "9090:9090"
     restarts: unless-stopped
     depends_on:
       - pushgateway
+      - node-exporter
 
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
+    pid: host
+    network_mode: host
+    volumes:
+      - /:/host;ro,rslave
+    command:
+      - "--path.rootfs=/host"
     ports:
       - "9100:9100"
     restart: unless-stopped
@@ -40,6 +53,16 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
     restart: unless-stopped
     depends_on:
       - prometheus
+
+volumes:
+  prometheus-data:
+    name: prometheus-data
+  prometheus-script:
+    name: prometheus-script
+  pushgateway-data:
+    name: pushgateway-data
