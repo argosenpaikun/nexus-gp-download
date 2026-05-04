@@ -8,12 +8,14 @@ services:
       - PUSHGATEWAY=pushgateway:9091
     depends_on:
       - pushgateway
+    restart: unless-stopped
   
   pushgateway:
     image: prom/pushgateway:latest
     container_name: pushgateway
     ports:
       - "9091:9091"
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:latest
@@ -22,13 +24,22 @@ services:
       - prometheus-script:/etc/prometheus
     ports:
       - "9090:9090"
+    restarts: unless-stopped
     depends_on:
       - pushgateway
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3000:3000"
+    restart: unless-stopped
     depends_on:
       - prometheus
