@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  scraper:
+    image:
+    container_name: gp-scraper
+    environment:
+      - PUSHGATEWAY=pushgateway:9091
+    depends_on:
+      - pushgateway
+  
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: pushgateway
+    ports:
+      - "9091:9091"
