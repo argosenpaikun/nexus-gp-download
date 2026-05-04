@@ -14,3 +14,21 @@ services:
     container_name: pushgateway
     ports:
       - "9091:9091"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - prometheus-script:/etc/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - pushgateway
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
