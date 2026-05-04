@@ -29,10 +29,15 @@ def collect_metrics():
         registry = CollectorRegistry()
 
         # App-level metrics
-        download = Gauge("app_downloads", "Total Installs", registry=registry)
+        downloads = Gauge("app_downloads", "Total Installs", registry=registry)
         rating_count = Gauge("app_rating_count", "Total Rating Count", registry=registry)
         score = Gauge("app_score", "Average Score", registry=registry)
         review_count = Gauge("app_reviews", "Total Reviews", registry=registry)
+
+        downloads.set(int(result["installs"].replace(",", "").replace("+", "")))
+        rating_count.set(safe(result.get("ratings")))
+        score.set(safe(result.get("score")))
+        review_count.set(safe(result.get("reviews")))
 
         # Rating distribution metrics
         rating_gauge = Gauge(
@@ -43,7 +48,7 @@ def collect_metrics():
         )
 
         for star in [1, 2, 3, 4, 5]:
-            rating_gauge.labels(stars=str(star)).set(rating_count.get(star, 0))
+            rating_gauge.labels(stars=str(star)).set(rating_counts.get(star, 0))
 
         # Push to Pushgateway
         push_to_gateway(PUSHGATEWAY, job=JOB_NAME, registry=registry)
