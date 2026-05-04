@@ -1,9 +1,42 @@
 from google_play_scraper import app, reviews, Sort
-import matplotlib.pyplot as plt
 from collections import Counter
+from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
+import os
+import time
+
+PUSHGATEWAY = os.getenv("PUSHGATEWAY", "pushgateway:9091")
+JOB_NAME = "google_play_scrapper"
 
 def safe(value):
-     return value if value is not None else "N/A"
+     return value if value is not None else 0
+
+def collect_metrics():
+        app_id = "gov.mcmc.nexus"
+
+        result = app(app_id)
+
+        review_result, _ = reviews(
+             app_id,
+             lang="en",
+             country="my",
+             sort=Sort.NEWEST,
+             count=1000
+        )
+
+        ratings = [r["score"] for r in review_result]
+        rating_counts = Counter(ratings)
+
+        registry = CollectorRegistry()
+
+        # App-level metrics
+        download = Gauge("app_downloads", "Total Installs", registry=registry)
+        rating_count = Gauge("app_rating_count", "Total Rating Count", registry=registry)
+        score = Gauge("app_score", "Average Score", registry=registry)
+        review_count = Gauge("app_reviews", "Total Reviews", registry=registry)
+
+        
+
+
 
 if __name__ == "__main__":
     app_id = "gov.mcmc.nexus"
